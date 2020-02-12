@@ -10,7 +10,7 @@ const mutations = {
 
 const actions = {
     allComputers: ({commit}) => {
-        commit('LOAD_COMPUTERS', computers);
+        commit('LOAD_COMPUTERS');
     }
 };
 
