@@ -10,9 +10,9 @@
                     <b-dropdown-item router-link to="/monitors" active-class="active">Monitors</b-dropdown-item>
                 </b-nav-item-dropdown>
 
-                <b-nav-item-dropdown text="User" right>
-                    <b-dropdown-item href="#">Account</b-dropdown-item>
-                    <b-dropdown-item href="#">Settings</b-dropdown-item>
+                <b-nav-item-dropdown text="Add new" right>
+                    <b-dropdown-item router-link to="/computer">Computer</b-dropdown-item>
+                    <b-dropdown-item router-link to="/monitor">Monitor</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
         </b-navbar>

@@ -15,6 +15,11 @@
             <template v-slot:cell(outOffOffice)="cell">
                 <b-form-checkbox v-model="cell.value" :disabled="true" :style="{color: 'danger'}" switch size="lg"></b-form-checkbox>
             </template>
+            <template v-slot:cell(action)="row">
+                <b-button variant="primary" @click="row.toggleDetails">
+                    {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
+                </b-button>
+            </template>
         </b-table>
     </div>
 </template>
@@ -58,6 +63,10 @@
                         key: 'user.name',
                         sortable: false,
                         label: 'User Name'
+                    },
+                    {
+                        key: 'action',
+                        sortable: false
                     },
                 ],
                 tableSet: {
