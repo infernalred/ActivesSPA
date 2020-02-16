@@ -13,13 +13,10 @@ const mutations = {
 const actions = {
     allUsers: ({commit}) => {
         axios.get('/actives/GetUsers')
-            .then(res => res.data)
-            .then(data => {
-                if (data) {
-                    const users = data.users;
-                    commit('LOAD_USERS', users);
-                }
-            });
+            .then(res => {
+                const users = res.data;
+                commit('LOAD_USERS', users);
+                })
     }
 };
 

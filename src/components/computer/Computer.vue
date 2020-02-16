@@ -22,24 +22,15 @@
                 ></b-form-textarea>
             </b-form-group>
 
-            <b-form-group id="input-group-3" label="User:" label-for="input-3">
-                <b-form-select
-                        id="input-3"
-                        v-model="userSelect"
-                        :options="funds"
-                        required
-                ></b-form-select>
-            </b-form-group>
-
-            <b-form-select v-model="userSelect" :options="options1">
-                <template v-slot:first>
-                    <b-form-select-option value="" disabled>-- Please select an option --</b-form-select-option>
-                </template>
-            </b-form-select>
-
             <select v-model="userSelect" class="form-control">
-                <option v-for="user in funds" :key="user.id" :value="user">{{user.name }} {{user.id }}</option>
+                <option v-for="user in getUsers" :key="user.id" :value="user">{{user.name }} {{user.id }}</option>
             </select>
+            <br>
+            <b-input-group prepend="Room: ">
+                <b-form-input :disabled="true" :value="userSelect!==null ? userSelect.room.name : '0'"></b-form-input>
+            </b-input-group>
+
+            <br>
 
             <b-form-group id="input-group-4">
                     <b-form-checkbox v-model="computer.outOffOffice" switch>Out Off Office</b-form-checkbox>
@@ -59,7 +50,6 @@
 
 <script>
     import {mapActions} from "vuex";
-    import axios from "axios";
 
     export default {
         data() {
@@ -78,29 +68,18 @@
                     name: '',
                     roomId: 0
                 },
-                jsonUsers: [],
-                peoples: [{ text: 'Select One', value: null }, 'one', 'two'],
-                options1: [],
-                options2: [],
                 show: true
             }
         },
         computed: {
-            funds() {
-                return this.options1;
+            getUsers() {
+                return this.$store.getters.users;
             }
         },
         methods: {
             ...mapActions({
                 loadUsers: 'allUsers'
             }),
-            getAllUsers() {
-                axios.get('/actives/GetUsers')
-                    .then(res => {
-                        this.options1 = res.data
-                        console.log(this.options1)
-                    })
-            },
             onSubmit(evt) {
                 evt.preventDefault()
                 console.log(JSON.stringify(this.computer))
@@ -108,7 +87,7 @@
             onReset(evt) {
                 evt.preventDefault()
 
-                this.getAllUsers()
+                this.loadUsers()
                 // Reset our form values
                 this.computer.name = ''
                 this.computer.comment = ''
@@ -122,6 +101,9 @@
                     this.show = true
                 })
             }
+        },
+        mounted() {
+            this.loadUsers()
         }
     }
 </script>
