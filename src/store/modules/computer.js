@@ -23,20 +23,20 @@ const state = {
 };
 
 const mutations = {
-    'LOAD_COMPUTERS' (state, computers) {
+    'LOAD_COMPUTER' (state, computers) {
         state.computers = computers;
     }
 };
 
 const actions = {
     allComputers: ({commit}) => {
-        commit('LOAD_COMPUTERS');
+        commit('LOAD_COMPUTER');
     }
 };
 
 const getters = {
-    computers: state => {
-        return state.computers;
+    computer: state => {
+        return state.computer;
     }
 };
 

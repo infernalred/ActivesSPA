@@ -42,7 +42,7 @@
         </b-form>
         <b-card class="mt-3" header="Form Data Result">
             <pre class="m-0">{{ computer }}</pre>
-            <pre v-if="userSelect!==null" class="m-0">{{ userSelect }} и  {{ userSelect.name }}</pre>
+            <pre v-if="userSelect!==null" class="m-0">{{ userSelect }}}</pre>
         </b-card>
         </div>
     </div>
@@ -57,17 +57,11 @@
                 computer: {
                     name: '',
                     comment: '',
-                    user: '',
-                    room: '',
+                    userId: 0,
                     outOffOffice: false,
                     broken: false
                 },
                 userSelect: null,
-                user: {
-                    id: 0,
-                    name: '',
-                    roomId: 0
-                },
                 show: true
             }
         },
@@ -82,7 +76,9 @@
             }),
             onSubmit(evt) {
                 evt.preventDefault()
-                console.log(JSON.stringify(this.computer))
+                this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0
+                console.log(this.computer)
+
             },
             onReset(evt) {
                 evt.preventDefault()
@@ -91,8 +87,7 @@
                 // Reset our form values
                 this.computer.name = ''
                 this.computer.comment = ''
-                this.computer.user = null
-                this.user = null
+                this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0
                 this.computer.outOffOffice = false
                 this.computer.broken = false
                 // Trick to reset/clear native browser form validation state

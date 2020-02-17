@@ -25,13 +25,12 @@
 </template>
 
 <script>
-    import axios from 'axios';
+
+    import {mapActions} from "vuex";
 
     export default {
         data() {
             return {
-                items: [],
-                computers: [],
                 fields: [
                     {
                         key: 'inventory',
@@ -76,22 +75,18 @@
                 }
             }
         },
+        methods: {
+            ...mapActions({
+                loadComputers: 'allComputers'
+            })
+        },
+        computed: {
+            computers() {
+               return this.$store.getters.computers;
+            }
+        },
         created () {
-            axios.get('/Actives/GetComputers')
-                .then(res => {
-                    console.log(res)
-                    const data = res.data
-                    //const network = []
-                    const computers = []
-                    for (let key in data) {
-                        const computer = data[key]
-                        computer.id = key
-                        computers.push(computer)
-                    }
-                    console.log(computers)
-                    this.computers = computers
-                })
-                .catch(error => console.log(error))
+            this.loadComputers();
         }
     }
 </script>

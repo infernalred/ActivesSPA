@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const state = {
     computers: []
 };
@@ -10,7 +12,12 @@ const mutations = {
 
 const actions = {
     allComputers: ({commit}) => {
-        commit('LOAD_COMPUTERS');
+        axios.get('/Actives/GetComputers')
+            .then(res => {
+                const computers = res.data
+                commit('LOAD_COMPUTERS', computers);
+            })
+            .catch(error => console.log(error))
     }
 };
 
