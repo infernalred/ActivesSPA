@@ -19,6 +19,8 @@
                 <b-button variant="primary" @click="row.toggleDetails">
                     {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
                 </b-button>
+                <br>
+                <router-link tag="button" :to="{ name: 'computerEdit', params: { id: row.item.id } }" class="btn btn-danger">Edit</router-link>
             </template>
         </b-table>
     </div>
@@ -32,6 +34,10 @@
         data() {
             return {
                 fields: [
+                    {
+                        key: 'id',
+                        sortable: true,
+                    },
                     {
                         key: 'inventory',
                         sortable: true,
@@ -85,7 +91,7 @@
                return this.$store.getters.computers;
             }
         },
-        created () {
+        mounted () {
             this.loadComputers();
         }
     }

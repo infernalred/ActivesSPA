@@ -22,12 +22,12 @@
                 ></b-form-textarea>
             </b-form-group>
 
-            <select v-model="userSelect" class="form-control">
+            <select v-model="computer.user" class="form-control">
                 <option v-for="user in getUsers" :key="user.id" :value="user">{{user.name }} {{user.id }}</option>
             </select>
             <br>
             <b-input-group prepend="Room: ">
-                <b-form-input :disabled="true" :value="userSelect!==null ? userSelect.room.name : '0'"></b-form-input>
+                <b-form-input :disabled="true" :value="computer && computer.user && computer.user.room && computer.user.room.name"></b-form-input>
             </b-input-group>
 
             <br>
@@ -40,10 +40,6 @@
             <b-button type="submit" variant="primary">Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
         </b-form>
-        <b-card class="mt-3" header="Form Data Result">
-            <pre class="m-0">{{ computer }}</pre>
-            <pre v-if="userSelect!==null" class="m-0">{{ userSelect }}}</pre>
-        </b-card>
         </div>
     </div>
 </template>
@@ -53,6 +49,11 @@
 
 
     export default {
+        computed: {
+            getUsers() {
+                return this.$store.getters.users;
+            }
+        },
         data() {
             return {
                 computer: {
@@ -60,20 +61,21 @@
                     comment: '',
                     outOffOffice: false,
                     broken: false,
-                    userId: 0
+                    userId: 0,
+                    room: {
+                        id: 0,
+                        name: '5'
+                    }
                 },
                 userSelect: null,
-                show: true
-            }
-        },
-        computed: {
-            getUsers() {
-                return this.$store.getters.users;
+                show: true,
+                loading: true
             }
         },
         methods: {
             ...mapActions({
-                loadUsers: 'allUsers'
+                loadUsers: 'allUsers',
+                loadComputer: 'getComputer'
             }),
             onSubmit() {
                 this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0
@@ -86,7 +88,6 @@
                 // Reset our form values
                 this.computer.name = ''
                 this.computer.comment = ''
-                this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0
                 this.computer.outOffOffice = false
                 this.computer.broken = false
                 // Trick to reset/clear native browser form validation state
@@ -97,7 +98,20 @@
             }
         },
         mounted() {
-            this.loadUsers()
+            this.loadUsers();
+            //this.computer = this.$store.getters.computer
+            //this.loadComputer(this.$route.params.id).then(() => {
+            //    this.computer = this.$store.getters.computer;
+            //});
+            this.$store.dispatch("getComputer", this.$route.params.id).then(response => {
+                this.computer = response
+            }, error => {
+                console.log(error)
+            })
+
+
+            //this.computer.id = this.$route.params.id
+
         }
     }
 </script>
