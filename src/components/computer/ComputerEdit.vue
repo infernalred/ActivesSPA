@@ -1,7 +1,7 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="computer">
         <div class="row justify-content-left">
-        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+        <b-form @submit="onSubmit" >
 
             <b-form-group id="input-group-2" label="PC Name:" label-for="input-2">
                 <b-form-input
@@ -27,7 +27,7 @@
             </select>
             <br>
             <b-input-group prepend="Room: ">
-                <b-form-input :disabled="true" :value="computer && computer.user && computer.user.room && computer.user.room.name"></b-form-input>
+                <b-form-input :disabled="true" :value="computer.user.room.name"></b-form-input>
             </b-input-group>
 
             <br>
@@ -52,11 +52,19 @@
         computed: {
             getUsers() {
                 return this.$store.getters.users;
+            },
+            computer: {
+                get() {
+                    return this.$store.state.computer.computer;
+                },
+                set() {
+                    this.$store.dispatch("addComputer", this.computer);
+                }
             }
         },
         data() {
             return {
-                computer: {
+                computer2: {
                     name: '',
                     comment: '',
                     outOffOffice: false,
@@ -66,52 +74,23 @@
                         id: 0,
                         name: '5'
                     }
-                },
-                userSelect: null,
-                show: true,
-                loading: true
+                }
             }
         },
         methods: {
             ...mapActions({
                 loadUsers: 'allUsers',
-                loadComputer: 'getComputer'
+                loadComputer: 'getComputer',
+                loadComputer2: 'getComputer2'
             }),
-            onSubmit() {
-                this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0
-                this.$store.dispatch('addComputer', this.computer);
-            },
-            onReset(evt) {
-                evt.preventDefault()
-
-                this.loadUsers()
-                // Reset our form values
-                this.computer.name = ''
-                this.computer.comment = ''
-                this.computer.outOffOffice = false
-                this.computer.broken = false
-                // Trick to reset/clear native browser form validation state
-                this.show = false
-                this.$nextTick(() => {
-                    this.show = true
-                })
+            onSubmit(evt) {
+                evt.preventDefault();
+                this.$store.dispatch('updateComputer', this.computer);
             }
         },
         mounted() {
             this.loadUsers();
-            //this.computer = this.$store.getters.computer
-            //this.loadComputer(this.$route.params.id).then(() => {
-            //    this.computer = this.$store.getters.computer;
-            //});
-            this.$store.dispatch("getComputer", this.$route.params.id).then(response => {
-                this.computer = response
-            }, error => {
-                console.log(error)
-            })
-
-
-            //this.computer.id = this.$route.params.id
-
+            this.$store.dispatch('getComputer2', this.$route.params.id);
         }
     }
 </script>

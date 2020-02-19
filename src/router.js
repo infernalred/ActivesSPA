@@ -11,9 +11,7 @@ Vue.use(VueRouter);
 const routes = [
     { path: '/', component: Computers },
     { path: '/computers', component: Computers },
-    { path: '/computer', component: Computer, beforeEnter: (to, from, next) => {
-        next();
-        }},
+    { path: '/computer', component: Computer, },
     { path: '/computer/:id/edit', component: ComputerEdit, name: 'computerEdit' },
     { path: '/monitors', component: Monitors },
     { path: '/monitor', component: Monitor },

@@ -8,12 +8,9 @@ const state = {
 const mutations = {
     'SET_COMPUTER' (state, payload) {
         state.computer = payload;
-        state.computer.user = payload.user;
-        state.computer.user.room = payload.user.room;
-        state.computer = payload;
     },
     'SAVE_COMPUTER' (state, payload) {
-        state.computers.push(payload);
+        state.computer = payload;
     }
 };
 
@@ -22,7 +19,7 @@ const actions = {
         axios.get('/actives/GetComputer/' + id)
             .then(res => {
                 let computer = res.data;
-                console.log(computer.user.room)
+                console.log(computer)
                 commit('SET_COMPUTER', computer);
             })
 
@@ -32,7 +29,6 @@ const actions = {
         axios.get('/actives/GetComputer/' + id)
             .then(res => {
                 let computer = res.data;
-                console.log(computer.user.room)
                 commit('SET_COMPUTER', computer);
                 resolve(computer);
             }, error => {
@@ -42,18 +38,35 @@ const actions = {
 
     },
     addComputer ({commit}, computer) {
-        axios.post('/actives/addComputer', computer)
-            .then(res => {
-                console.log(res)
-                commit('SAVE_COMPUTER', computer)
-            })
-            .catch(error => console.log(error))
-        }
+        return new Promise((resolve, reject) => {
+            axios.post('/actives/addComputer', computer)
+                .then(res => {
+                    commit('SAVE_COMPUTER', computer);
+                    resolve(res);
+                }, error => {
+                    reject(error);
+                })
+        })
+    },
+    updateComputer ({commit}, computer) {
+        return new Promise((resolve, reject) => {
+            const id = computer.id;
+            console.log(computer)
+            axios.put('/actives/UpdateComputer/' + id, computer)
+                .then(res => {
+                    console.log('update ', computer.id)
+                    commit('SAVE_COMPUTER', computer);
+                    resolve(res);
+                }, error => {
+                    reject(error);
+                })
+        })
+    }
 
 };
 
 const getters = {
-    computer: state => {
+    getComputer: state => {
         return state.computer;
     }
 };

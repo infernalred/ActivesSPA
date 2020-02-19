@@ -35,10 +35,6 @@
             return {
                 fields: [
                     {
-                        key: 'id',
-                        sortable: true,
-                    },
-                    {
                         key: 'inventory',
                         sortable: true,
                     },

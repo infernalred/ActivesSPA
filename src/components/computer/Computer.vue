@@ -75,9 +75,19 @@
             ...mapActions({
                 loadUsers: 'allUsers'
             }),
-            onSubmit() {
-                this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0
-                this.$store.dispatch('addComputer', this.computer);
+            onSubmit(evt) {
+                evt.preventDefault();
+                this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0;
+                this.$store.dispatch("addComputer", this.computer).then(response => {
+                    if (response.status === 204)
+                    {
+                        this.$router.push('/computers');
+                    }
+                }, error => {
+                    console.log(error)
+                })
+
+
             },
             onReset(evt) {
                 evt.preventDefault()
