@@ -19,7 +19,6 @@ const actions = {
         axios.get('/actives/GetComputer/' + id)
             .then(res => {
                 let computer = res.data;
-                console.log(computer)
                 commit('SET_COMPUTER', computer);
             })
 

@@ -1,4 +1,9 @@
 <template>
+    <div class="computer">
+        <div v-if="loading" class="loading">
+            <h1>LOADING</h1>
+            <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
+        </div>
     <div class="container" v-if="computer">
         <div class="row justify-content-left">
         <b-form @submit="onSubmit" >
@@ -42,6 +47,7 @@
         </b-form>
         </div>
     </div>
+    </div>
 </template>
 
 <script>
@@ -53,7 +59,7 @@
             getUsers() {
                 return this.$store.getters.users;
             },
-            computer: {
+            computer3: {
                 get() {
                     return this.$store.state.computer.computer;
                 },
@@ -64,17 +70,9 @@
         },
         data() {
             return {
-                computer2: {
-                    name: '',
-                    comment: '',
-                    outOffOffice: false,
-                    broken: false,
-                    userId: 0,
-                    room: {
-                        id: 0,
-                        name: '5'
-                    }
-                }
+                computer: null,
+                error: null,
+                loading: false
             }
         },
         methods: {
@@ -83,6 +81,20 @@
                 loadComputer: 'getComputer',
                 loadComputer2: 'getComputer2'
             }),
+            fetchData() {
+                this.loading = true
+                //this.loadComputer2(this.$route.params.id);
+                this.$store.dispatch('getComputer', this.$route.params.id).then(() => {
+                    console.log(this.loading)
+                    this.loading = false
+                    console.log(this.$store.state.computer.computer)
+                    this.computer = this.$store.state.computer.computer;
+                    console.log(this.computer)
+                    console.log(this.loading)
+                }, error => {
+                    console.log(error)
+                })
+            },
             onSubmit(evt) {
                 evt.preventDefault();
                 this.$store.dispatch('updateComputer', this.computer);
@@ -90,7 +102,8 @@
         },
         mounted() {
             this.loadUsers();
-            this.$store.dispatch('getComputer2', this.$route.params.id);
+            this.fetchData();
+            //this.$store.dispatch('getComputer2', this.$route.params.id);
         }
     }
 </script>
