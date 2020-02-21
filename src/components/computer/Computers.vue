@@ -6,7 +6,7 @@
                 <col
                         v-for="field in scope.fields"
                         :key="field.key"
-                        :style="{ width: field.key === 'inventory' || field.key === 'broken' || field.key === 'outOffOffice' ? '100px' : '180px' }"
+                        :style="{ width: field.key === 'inventory' || field.key === 'broken' || field.key === 'name' || field.key === 'outOffOffice' ? '100px' : '180px' }"
                 >
             </template>
             <template v-slot:cell(broken)="cell">

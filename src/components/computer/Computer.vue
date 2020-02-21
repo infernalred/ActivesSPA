@@ -22,7 +22,7 @@
                 ></b-form-textarea>
             </b-form-group>
 
-            <select v-model="userSelect" class="form-control">
+            <select v-model="userSelect" class="form-control" @change="changeUserId">
                 <option v-for="user in getUsers" :key="user.id" :value="user">{{user.name }} {{user.id }}</option>
             </select>
             <br>
@@ -75,9 +75,11 @@
             ...mapActions({
                 loadUsers: 'allUsers'
             }),
+            changeUserId() {
+                this.computer.userId = this.userSelect.id
+            },
             onSubmit(evt) {
                 evt.preventDefault();
-                this.computer.userId = this.userSelect!==null ? this.userSelect.id : 0;
                 this.$store.dispatch("addComputer", this.computer).then(response => {
                     if (response.status === 204)
                     {

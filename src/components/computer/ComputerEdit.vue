@@ -1,7 +1,6 @@
 <template>
     <div class="computer">
-        <div v-if="loading" class="loading">
-            <h1>LOADING</h1>
+        <div v-if="loading" class="loading justify-content-center mb-3">
             <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
         </div>
     <div class="container" v-if="computer">
@@ -27,8 +26,8 @@
                 ></b-form-textarea>
             </b-form-group>
 
-            <select v-model="computer.user" class="form-control">
-                <option v-for="user in getUsers" :key="user.id" :value="user">{{user.name }} {{user.id }}</option>
+            <select v-model="computer.user" class="form-control" @change="changeUserId">
+                <option v-for="user in getUsers" :key="user.id" :value="user" >{{user.name }} {{user.id }}</option>
             </select>
             <br>
             <b-input-group prepend="Room: ">
@@ -81,29 +80,28 @@
                 loadComputer: 'getComputer',
                 loadComputer2: 'getComputer2'
             }),
+            changeUserId() {
+                this.computer.userId = this.computer.user.id
+            },
             fetchData() {
-                this.loading = true
-                //this.loadComputer2(this.$route.params.id);
+                this.loading = true;
                 this.$store.dispatch('getComputer', this.$route.params.id).then(() => {
-                    console.log(this.loading)
-                    this.loading = false
-                    console.log(this.$store.state.computer.computer)
+                    this.loading = false;
                     this.computer = this.$store.state.computer.computer;
-                    console.log(this.computer)
-                    console.log(this.loading)
                 }, error => {
+                    this.error = error;
                     console.log(error)
                 })
             },
             onSubmit(evt) {
                 evt.preventDefault();
+                console.log(JSON.stringify(this.computer))
                 this.$store.dispatch('updateComputer', this.computer);
             }
         },
         mounted() {
             this.loadUsers();
             this.fetchData();
-            //this.$store.dispatch('getComputer2', this.$route.params.id);
         }
     }
 </script>
