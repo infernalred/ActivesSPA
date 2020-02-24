@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const state = {
     computer: null,
-    computers: []
+    computers: [],
 };
 
 const mutations = {

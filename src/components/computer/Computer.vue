@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row justify-content-left">
+        <div class="row justify-content-left mt-3">
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
 
             <b-form-group id="input-group-2" label="PC Name:" label-for="input-2">
@@ -40,19 +40,28 @@
             <b-button type="submit" variant="primary">Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
         </b-form>
-        <b-card class="mt-3" header="Form Data Result">
-            <pre class="m-0">{{ computer }}</pre>
-            <pre v-if="userSelect!==null" class="m-0">{{ userSelect }}}</pre>
-        </b-card>
+            <div class="col-xs-6 col-6 col-md-3 mr-5">
+                <b-button-group>
+                    <b-button variant="success" @click="addNetwork">Add</b-button>
+                    <b-button variant="warning" @click="delNetwork">Del</b-button>
+                </b-button-group>
+                <div class="mt-">
+                    <app-network v-for="network in networks" :key="network.id" :network="network"></app-network>
+                </div>
+            </div>
+
         </div>
     </div>
 </template>
 
 <script>
     import {mapActions} from "vuex";
-
+    import Network from '../network/Network.vue';
 
     export default {
+        components: {
+            appNetwork: Network
+        },
         data() {
             return {
                 computer: {
@@ -60,15 +69,19 @@
                     comment: '',
                     outOffOffice: false,
                     broken: false,
-                    userId: 0
+                    userId: 0,
+                    network: []
                 },
                 userSelect: null,
-                show: true
+                show: true,
             }
         },
         computed: {
             getUsers() {
                 return this.$store.getters.users;
+            },
+            networks() {
+                return this.$store.getters.networks;
             }
         },
         methods: {
@@ -78,8 +91,19 @@
             changeUserId() {
                 this.computer.userId = this.userSelect.id
             },
+            addNetwork() {
+                console.log('Add Subnet');
+                this.$store.dispatch('initNetwork')
+            },
+            delNetwork() {
+                console.log('Del Subnet');
+                this.$store.dispatch('delNetwork')
+            },
             onSubmit(evt) {
                 evt.preventDefault();
+                this.computer.network = this.$store.getters.networks;
+                //console.log(this.networks)
+                //console.log(this.computer)
                 this.$store.dispatch("addComputer", this.computer).then(response => {
                     if (response.status === 204)
                     {
@@ -109,7 +133,8 @@
             }
         },
         mounted() {
-            this.loadUsers()
+            this.loadUsers();
+            this.$store.dispatch('initNetwork')
         }
     }
 </script>

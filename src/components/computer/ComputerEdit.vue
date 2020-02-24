@@ -44,6 +44,15 @@
             <b-button type="submit" variant="primary">Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
         </b-form>
+            <div class="col-xs-6 col-6 col-md-3 mr-5">
+                <b-button-group>
+                    <b-button variant="success" @click="addNetwork">Add</b-button>
+                    <b-button variant="warning" @click="delNetwork">Del</b-button>
+                </b-button-group>
+                <div class="mt-">
+                    <app-network v-for="network in computer.network" :key="network.id" :network="network"></app-network>
+                </div>
+            </div>
         </div>
     </div>
     </div>
@@ -51,20 +60,18 @@
 
 <script>
     import {mapActions} from "vuex";
-
+    import Network from '../network/Network.vue';
 
     export default {
+        components: {
+            appNetwork: Network
+        },
         computed: {
             getUsers() {
                 return this.$store.getters.users;
             },
-            computer3: {
-                get() {
-                    return this.$store.state.computer.computer;
-                },
-                set() {
-                    this.$store.dispatch("addComputer", this.computer);
-                }
+            networks() {
+                return this.$store.getters.networks;
             }
         },
         data() {
@@ -83,11 +90,21 @@
             changeUserId() {
                 this.computer.userId = this.computer.user.id
             },
+            addNetwork() {
+                console.log('Add Subnet');
+                this.$store.dispatch('initNetwork')
+            },
+            delNetwork() {
+                console.log('Del Subnet');
+                this.$store.dispatch('delNetwork')
+            },
             fetchData() {
                 this.loading = true;
                 this.$store.dispatch('getComputer', this.$route.params.id).then(() => {
                     this.loading = false;
                     this.computer = this.$store.state.computer.computer;
+                    console.log(this.computer.network);
+                    this.$store.dispatch('loadNetwork', this.computer.network)
                 }, error => {
                     this.error = error;
                     console.log(error)
@@ -95,7 +112,6 @@
             },
             onSubmit(evt) {
                 evt.preventDefault();
-                console.log(JSON.stringify(this.computer))
                 this.$store.dispatch('updateComputer', this.computer);
             }
         },
