@@ -50,7 +50,7 @@
                     <b-button variant="warning" @click="delNetwork">Del</b-button>
                 </b-button-group>
                 <div class="mt-">
-                    <app-network v-for="network in computer.network" :key="network.id" :network="network"></app-network>
+                    <app-network v-for="network in networks" :key="network.id" :network="network"></app-network>
                 </div>
             </div>
         </div>
@@ -103,7 +103,6 @@
                 this.$store.dispatch('getComputer', this.$route.params.id).then(() => {
                     this.loading = false;
                     this.computer = this.$store.state.computer.computer;
-                    console.log(this.computer.network);
                     this.$store.dispatch('loadNetwork', this.computer.network)
                 }, error => {
                     this.error = error;
@@ -112,6 +111,7 @@
             },
             onSubmit(evt) {
                 evt.preventDefault();
+                console.log(this.computer)
                 this.$store.dispatch('updateComputer', this.computer);
             }
         },

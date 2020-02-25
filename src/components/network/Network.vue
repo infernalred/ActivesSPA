@@ -12,18 +12,12 @@
 <script>
     export default {
         props: ['network'],
-        data() {
-            return {
-                ipAddress: '',
-                mac: ''
-            }
-        },
         methods: {
             changeNetwork() {
                 const net = {
                     networkId: this.network.id,
-                    ipAddress: this.ipAddress,
-                    mac: this.mac
+                    ipAddress: this.network.ipAddress,
+                    mac: this.network.mac
                 };
                 console.log(net);
                 this.$store.dispatch('setNetwork', net);
