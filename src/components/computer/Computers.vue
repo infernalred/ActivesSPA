@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-table striped hover :items="computers" :fixed="tableSet.fixed" :bordered="tableSet.bordered"
+        <b-table striped hover :items="computers" :fixed="tableSet.fixed" :bordered="tableSet.bordered" id="tableComps"
                  :head-variant="tableSet.headVariant" :fields="fields">
             <template v-slot:table-colgroup="scope">
                 <col
@@ -23,6 +23,9 @@
                 <router-link tag="button" :to="{ name: 'computerEdit', params: { id: row.item.id } }" class="btn btn-danger">Edit</router-link>
             </template>
         </b-table>
+        <div v-show="loading" class="loading justify-content-center mb-3">
+            <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
+        </div>
     </div>
 </template>
 
@@ -33,6 +36,8 @@
     export default {
         data() {
             return {
+                loading: false,
+                page: 1,
                 fields: [
                     {
                         key: 'inventory',
@@ -80,7 +85,28 @@
         methods: {
             ...mapActions({
                 loadComputers: 'allComputers'
-            })
+            }),
+            scrollPage() {
+                window.onscroll = () => {
+                    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+                    if (bottomOfWindow) {
+                        this.loadComputersPerPage();
+                    }
+                }
+            },
+            loadComputersPerPage() {
+                this.loading = true;
+                this.$store.dispatch('allComputersPage', this.page).then((response) => {
+                    let pagenew = JSON.parse(response.headers.pagination);
+
+                    console.log(pagenew.currentPage);
+                    this.page = pagenew.currentPage + 1;
+                    this.loading = false
+                }, error => {
+                    console.log(error);
+                    this.loading =  false
+                })
+            }
         },
         computed: {
             computers() {
@@ -88,7 +114,9 @@
             }
         },
         mounted () {
-            this.loadComputers();
+            //this.loadComputers();
+            this.loadComputersPerPage();
+            this.scrollPage();
         }
     }
 </script>
