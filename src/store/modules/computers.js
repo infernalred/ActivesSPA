@@ -9,8 +9,6 @@ const mutations = {
         for (let i in computers2) {
             state.computers.push(computers2[i]);
         }
-
-        console.log(state.computers)
     }
 };
 
@@ -27,9 +25,14 @@ const actions = {
         return new Promise((resolve, reject) => {
         axios.get('/Actives/GetComputers?pageNumber=' + page)
             .then(res => {
-                const computers2 = res.data
-                commit('LOAD_COMPUTERS', computers2);
-                resolve(res);
+                if (state.computers.length < JSON.parse(res.headers.pagination).totalItems)
+                {
+                    console.log(state.computers.length);
+                    const computers2 = res.data
+                    commit('LOAD_COMPUTERS', computers2);
+                    resolve(res);
+                }
+
             }, error => {
                 reject(error);
             })

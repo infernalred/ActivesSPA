@@ -38,6 +38,8 @@
             return {
                 loading: false,
                 page: 1,
+                totalPage: 2,
+                totalItems: 0,
                 fields: [
                     {
                         key: 'inventory',
@@ -90,17 +92,19 @@
                 window.onscroll = () => {
                     let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
                     if (bottomOfWindow) {
-                        this.loadComputersPerPage();
+                        if (this.page <= this.totalPage)
+                            this.loadComputersPerPage();
                     }
                 }
             },
             loadComputersPerPage() {
                 this.loading = true;
                 this.$store.dispatch('allComputersPage', this.page).then((response) => {
-                    let pagenew = JSON.parse(response.headers.pagination);
+                    let pageNew = JSON.parse(response.headers.pagination);
 
-                    console.log(pagenew.currentPage);
-                    this.page = pagenew.currentPage + 1;
+                    console.log(pageNew.currentPage);
+                    this.page = pageNew.currentPage + 1;
+                    this.totalPage = pageNew.totalPage;
                     this.loading = false
                 }, error => {
                     console.log(error);
@@ -113,10 +117,14 @@
                return this.$store.getters.computers;
             }
         },
-        mounted () {
-            //this.loadComputers();
+        created() {
             this.loadComputersPerPage();
             this.scrollPage();
+        },
+        mounted () {
+            //this.loadComputers();
+            //this.loadComputersPerPage();
+            //this.scrollPage();
         }
     }
 </script>
