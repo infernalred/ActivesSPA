@@ -1,31 +1,31 @@
 <template>
     <div>
-        <b-table striped hover :items="computers" :fixed="tableSet.fixed" :bordered="tableSet.bordered" id="tableComps"
-                 :head-variant="tableSet.headVariant" :fields="fields">
-            <template v-slot:table-colgroup="scope">
-                <col
-                        v-for="field in scope.fields"
-                        :key="field.key"
-                        :style="{ width: field.key === 'inventory' || field.key === 'broken' || field.key === 'name' || field.key === 'outOffOffice' ? '100px' : '180px' }"
-                >
-            </template>
-            <template v-slot:cell(broken)="cell">
-                <b-form-checkbox v-model="cell.value" :disabled="true" :style="{color: 'danger'}" switch size="lg"></b-form-checkbox>
-            </template>
-            <template v-slot:cell(outOffOffice)="cell">
-                <b-form-checkbox v-model="cell.value" :disabled="true" :style="{color: 'danger'}" switch size="lg"></b-form-checkbox>
-            </template>
-            <template v-slot:cell(action)="row">
-                <b-button variant="primary" @click="row.toggleDetails">
-                    {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
-                </b-button>
-                <br>
-                <router-link tag="button" :to="{ name: 'computerEdit', params: { id: row.item.id } }" class="btn btn-danger">Edit</router-link>
-            </template>
-        </b-table>
-        <div v-show="loading" class="loading justify-content-center mb-3">
-            <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
-        </div>
+        <b-table striped hover :items="computers" :bordered="tableSet.bordered" id="tableComps"
+                     :head-variant="tableSet.headVariant" :fields="fields">
+                <template v-slot:table-colgroup="scope">
+                    <col
+                            v-for="field in scope.fields"
+                            :key="field.key"
+                            :style="{ width: field.key === 'inventory' || field.key === 'broken' || field.key === 'name' || field.key === 'outOffOffice' ? '100px' : '180px' }"
+                    >
+                </template>
+                <template v-slot:cell(broken)="cell">
+                    <b-form-checkbox v-model="cell.value" :disabled="true" :style="{color: 'danger'}" switch size="lg"></b-form-checkbox>
+                </template>
+                <template v-slot:cell(outOffOffice)="cell">
+                    <b-form-checkbox v-model="cell.value" :disabled="true" :style="{color: 'danger'}" switch size="lg"></b-form-checkbox>
+                </template>
+                <template v-slot:cell(action)="row">
+                    <b-button variant="primary" @click="row.toggleDetails">
+                        {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
+                    </b-button>
+                    <br>
+                    <router-link tag="button" :to="{ name: 'computerEdit', params: { id: row.item.id } }" class="btn btn-danger">Edit</router-link>
+                </template>
+            </b-table>
+            <div v-show="loading" class="loading justify-content-center mb-3">
+                <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
+            </div>
     </div>
 </template>
 
@@ -39,7 +39,7 @@
                 loading: false,
                 page: 1,
                 totalPage: 2,
-                totalItems: 0,
+                totalItems: 1 - 10,
                 fields: [
                     {
                         key: 'inventory',
@@ -91,20 +91,37 @@
             scrollPage() {
                 window.onscroll = () => {
                     let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
-                    if (bottomOfWindow) {
-                        if (this.page <= this.totalPage)
+                    if (bottomOfWindow)
+                        if (this.totalItems > this.$store.getters.computers.length)
+                        {
                             this.loadComputersPerPage();
-                    }
+                        }
+
+                }
+            },
+            onScroll: function(event) {
+                let wrapper = event.target,
+                    list = wrapper.firstElementChild;
+
+
+                let scrollTop = wrapper.scrollTop,
+                    wrapperHeight = wrapper.offsetHeight,
+                    listHeight = list.offsetHeight
+
+                let diffHeight = listHeight - wrapperHeight;
+                console.log(wrapper, scrollTop, diffHeight);
+
+                if(diffHeight <= scrollTop && !this.loading) {
+                    this.loadComputersPerPage()
                 }
             },
             loadComputersPerPage() {
                 this.loading = true;
                 this.$store.dispatch('allComputersPage', this.page).then((response) => {
                     let pageNew = JSON.parse(response.headers.pagination);
-
-                    console.log(pageNew.currentPage);
                     this.page = pageNew.currentPage + 1;
-                    this.totalPage = pageNew.totalPage;
+                    console.log(this.page);
+                    this.totalItems = pageNew.totalItems;
                     this.loading = false
                 }, error => {
                     console.log(error);
@@ -117,14 +134,10 @@
                return this.$store.getters.computers;
             }
         },
-        created() {
-            this.loadComputersPerPage();
-            this.scrollPage();
-        },
         mounted () {
             //this.loadComputers();
-            //this.loadComputersPerPage();
-            //this.scrollPage();
+            this.loadComputersPerPage();
+            this.scrollPage();
         }
     }
 </script>

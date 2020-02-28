@@ -22,7 +22,7 @@
                 ></b-form-textarea>
             </b-form-group>
 
-            <select v-model="userSelect" class="form-control" @change="changeUserId">
+            <select v-model="userSelect" class="form-control" required @change="changeUserId">
                 <option v-for="user in getUsers" :key="user.id" :value="user">{{user.name }} {{user.id }}</option>
             </select>
             <br>
@@ -37,7 +37,7 @@
                     <b-form-checkbox v-model="computer.broken" switch>Broken</b-form-checkbox>
             </b-form-group>
 
-            <b-button type="submit" variant="primary">Submit</b-button>
+            <b-button type="submit" variant="primary" >Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
         </b-form>
             <div class="col-xs-6 col-6 col-md-3 mr-5">
@@ -75,6 +75,9 @@
                 userSelect: null,
                 show: true,
             }
+        },
+        validations() {
+
         },
         computed: {
             getUsers() {
@@ -132,8 +135,14 @@
                 })
             }
         },
+        beforeMount() {
+            console.log('clean')
+            this.$store.dispatch('cleanNetwork');
+            console.log(this.$store.getters.networks)
+        },
         mounted() {
             this.loadUsers();
+            //this.$store.dispatch('cleanNetwork')
             this.$store.dispatch('initNetwork')
         }
     }

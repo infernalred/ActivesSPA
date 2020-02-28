@@ -25,15 +25,18 @@ const mutations = {
     },
     'ADD_NETWORK' (state, payload) {
         state.networks = payload;
+    },
+    'CLEAN_NETWORK' (state, payload) {
+        state.networks = payload;
     }
 };
 
 const actions = {
     initNetwork ({commit}) {
-        const network = { id: 1, ip: '', mac: ''};
+        let network = { id: 1, ip: '', mac: ''};
         network.id = Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
         console.log(network);
-        commit('SET_NETWORK', network);
+        commit('CHANGE_NETWORK', network);
     },
     delNetwork ({commit}, network) {
         commit('DEL_NETWORK', network);
@@ -43,6 +46,10 @@ const actions = {
     },
     loadNetwork ({commit}, network) {
         commit('ADD_NETWORK', network)
+    },
+    cleanNetwork ({commit}) {
+        let computer = [];
+        commit('CLEAN_NETWORK', computer);
     }
 
 };
