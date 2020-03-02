@@ -6,9 +6,10 @@ const state = {
 
 const mutations = {
     'LOAD_COMPUTERS' (state, computers2) {
-        for (let i in computers2) {
-            state.computers.push(computers2[i]);
-        }
+        state.computers = computers2;
+        //for (let i in computers2) {
+        //    state.computers.push(computers2[i]);
+        //}
     }
 };
 

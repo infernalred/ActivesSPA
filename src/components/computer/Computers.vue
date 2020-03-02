@@ -1,7 +1,20 @@
 <template>
     <div>
+
+        <div class="overflow-auto">
+
+            <b-pagination
+                    v-model="page"
+                    :total-rows="totalItems"
+                    :per-page="30"
+                    aria-controls="tableComps"
+                    align="fill"
+                    @input="loadComputersPerPage(page)"
+            ></b-pagination>
+
+
         <b-table striped hover :items="computers" :bordered="tableSet.bordered" id="tableComps"
-                     :head-variant="tableSet.headVariant" :fields="fields">
+                     :head-variant="tableSet.headVariant" :fields="fields" :current-page="page" :busy.sync="loading">
                 <template v-slot:table-colgroup="scope">
                     <col
                             v-for="field in scope.fields"
@@ -23,9 +36,8 @@
                     <router-link tag="button" :to="{ name: 'computerEdit', params: { id: row.item.id } }" class="btn btn-danger">Edit</router-link>
                 </template>
             </b-table>
-            <div v-show="loading" class="loading justify-content-center mb-3">
-                <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
-            </div>
+
+        </div>
     </div>
 </template>
 
@@ -39,7 +51,7 @@
                 loading: false,
                 page: 1,
                 totalPage: 2,
-                totalItems: 1 - 10,
+                totalItems: 0,
                 fields: [
                     {
                         key: 'inventory',
@@ -88,41 +100,14 @@
             ...mapActions({
                 loadComputers: 'allComputers'
             }),
-            scrollPage() {
-                window.onscroll = () => {
-                    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
-                    if (bottomOfWindow)
-                        if (this.totalItems > this.$store.getters.computers.length)
-                        {
-                            this.loadComputersPerPage();
-                        }
-
-                }
-            },
-            onScroll: function(event) {
-                let wrapper = event.target,
-                    list = wrapper.firstElementChild;
-
-
-                let scrollTop = wrapper.scrollTop,
-                    wrapperHeight = wrapper.offsetHeight,
-                    listHeight = list.offsetHeight
-
-                let diffHeight = listHeight - wrapperHeight;
-                console.log(wrapper, scrollTop, diffHeight);
-
-                if(diffHeight <= scrollTop && !this.loading) {
-                    this.loadComputersPerPage()
-                }
-            },
-            loadComputersPerPage() {
+            loadComputersPerPage(page) {
                 this.loading = true;
-                this.$store.dispatch('allComputersPage', this.page).then((response) => {
+                this.$store.dispatch('allComputersPage', page).then((response) => {
                     let pageNew = JSON.parse(response.headers.pagination);
-                    this.page = pageNew.currentPage + 1;
+                    //this.page = pageNew.currentPage + 1;
                     console.log(this.page);
                     this.totalItems = pageNew.totalItems;
-                    this.loading = false
+                    this.loading = false;
                 }, error => {
                     console.log(error);
                     this.loading =  false
@@ -136,8 +121,7 @@
         },
         mounted () {
             //this.loadComputers();
-            this.loadComputersPerPage();
-            this.scrollPage();
+            this.loadComputersPerPage(this.page);
         }
     }
 </script>

@@ -6,10 +6,16 @@
             <b-form-group id="input-group-2" label="PC Name:" label-for="input-2">
                 <b-form-input
                         id="input-2"
-                        v-model="computer.name"
+                        v-model="$v.computer.name.$model"
                         required
                         placeholder="Enter name"
+                        :state="validateState('name')"
+                        @blur="$v.computer.name.$touch()"
+                        aria-describedby="input-1-live-feedback"
                 ></b-form-input>
+                <b-form-invalid-feedback
+                        id="input-1-live-feedback"
+                >This is a required field.</b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group id="input-group-1" label="Comment:" label-for="input-1">
@@ -22,9 +28,16 @@
                 ></b-form-textarea>
             </b-form-group>
 
-            <select v-model="userSelect" class="form-control" required @change="changeUserId">
+            <b-form-select v-model="$v.userSelect.$model" class="form-control" required @change="changeUserId"
+                    :state="validateUser('id')"
+                    @blur="$v.userSelect.$touch()"
+                    aria-describedby="input-2-live-feedback">
                 <option v-for="user in getUsers" :key="user.id" :value="user">{{user.name }} {{user.id }}</option>
-            </select>
+            </b-form-select>
+            <b-form-invalid-feedback
+                    id="input-2-live-feedback"
+            >Please, choose a user.</b-form-invalid-feedback>
+            <br>
             <br>
             <b-input-group prepend="Room: ">
                 <b-form-input :disabled="true" :value="userSelect!==null ? userSelect.room.name : '0'"></b-form-input>
@@ -37,7 +50,7 @@
                     <b-form-checkbox v-model="computer.broken" switch>Broken</b-form-checkbox>
             </b-form-group>
 
-            <b-button type="submit" variant="primary" >Submit</b-button>
+            <b-button type="submit" variant="primary" :disabled="$v.$invalid">Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
         </b-form>
             <div class="col-xs-6 col-6 col-md-3 mr-5">
@@ -57,15 +70,18 @@
 <script>
     import {mapActions} from "vuex";
     import Network from '../network/Network.vue';
+    import { validationMixin } from "vuelidate";
+    import { required} from "vuelidate/lib/validators";
 
     export default {
+        mixins: [validationMixin],
         components: {
             appNetwork: Network
         },
         data() {
             return {
                 computer: {
-                    name: '',
+                    name: null,
                     comment: '',
                     outOffOffice: false,
                     broken: false,
@@ -76,8 +92,17 @@
                 show: true,
             }
         },
-        validations() {
-
+        validations: {
+            computer: {
+                name: {
+                    required
+                }
+            },
+            userSelect: {
+                id: {
+                    required
+                }
+            }
         },
         computed: {
             getUsers() {
@@ -95,13 +120,20 @@
                 this.computer.userId = this.userSelect.id
             },
             addNetwork() {
-                console.log('Add Subnet');
                 this.$store.dispatch('initNetwork')
             },
             delNetwork() {
-                console.log('Del Subnet');
                 this.$store.dispatch('delNetwork')
             },
+            validateState(name) {
+                const { $dirty, $error } = this.$v.computer[name];
+                return $dirty ? !$error : null;
+            },
+            validateUser(id) {
+                const { $dirty, $error } = this.$v.userSelect[id];
+                return $dirty ? !$error : null;
+            },
+
             onSubmit(evt) {
                 evt.preventDefault();
                 this.computer.network = this.$store.getters.networks;
@@ -138,7 +170,6 @@
         beforeMount() {
             console.log('clean')
             this.$store.dispatch('cleanNetwork');
-            console.log(this.$store.getters.networks)
         },
         mounted() {
             this.loadUsers();
