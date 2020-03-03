@@ -26,7 +26,7 @@
 </template>
 <script>
     import { validationMixin } from "vuelidate";
-    import { required } from "vuelidate/lib/validators";
+    import { required, macAddress, ipAddress } from "vuelidate/lib/validators";
 
     export default {
         mixins: [validationMixin],
@@ -42,22 +42,24 @@
                 this.$store.dispatch('setNetwork', net);
 
             },
-            validateState(ipAddress) {
-                const { $dirty, $error} = this.$v.network[ipAddress];
+            validateState() {
+                const { $dirty, $error} = this.$v.network.ipAddress;
                 return $dirty ? !$error : null;
             },
-            validateState2(mac) {
-                const { $dirty, $error} = this.$v.network[mac];
+            validateState2() {
+                const { $dirty, $error} = this.$v.network.mac;
                 return $dirty ? !$error : null;
             },
         },
         validations: {
             network: {
                 ipAddress: {
-                    required
+                    required,
+                    ipAddress
                 },
                 mac: {
-                    required
+                    required,
+                    macAddress: macAddress()
                 }
             }
         },
