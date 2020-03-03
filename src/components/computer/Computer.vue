@@ -50,7 +50,7 @@
                     <b-form-checkbox v-model="computer.broken" switch>Broken</b-form-checkbox>
             </b-form-group>
 
-            <b-button type="submit" variant="primary" :disabled="$v.$invalid">Submit</b-button>
+            <b-button type="submit" variant="primary" :disabled="($v.$invalid || !this.valid)">Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
         </b-form>
             <div class="col-xs-6 col-6 col-md-3 mr-5">
@@ -58,11 +58,10 @@
                     <b-button variant="success" @click="addNetwork">Add</b-button>
                     <b-button variant="warning" @click="delNetwork">Del</b-button>
                 </b-button-group>
-                <div class="mt-">
-                    <app-network v-for="network in networks" :key="network.id" :network="network"></app-network>
+                <div class="mt-" >
+                    <app-network v-for="network in networks" :key="network.id" :network="network" @checkModel="valid = $event"></app-network>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
@@ -90,6 +89,7 @@
                 },
                 userSelect: null,
                 show: true,
+                valid: false
             }
         },
         validations: {
@@ -110,6 +110,9 @@
             },
             networks() {
                 return this.$store.getters.networks;
+            },
+            isValid() {
+                return this.valid;
             }
         },
         methods: {

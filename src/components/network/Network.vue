@@ -1,5 +1,5 @@
 <template>
-    <div @focusout="changeNetwork">
+    <div @focusout="changeNetwork($v)">
         <b-input-group prepend="IP: ">
             <b-form-input v-model="$v.network.ipAddress.$model"
                           :state="validateState('ipAddress')"
@@ -32,13 +32,14 @@
         mixins: [validationMixin],
         props: ['network'],
         methods: {
-            changeNetwork() {
+            changeNetwork($v) {
                 const net = {
                     networkId: this.network.id,
                     ipAddress: this.network.ipAddress,
                     mac: this.network.mac
                 };
-                console.log(net);
+                console.log($v.network.$invalid);
+                this.$emit('checkModel', !$v.$invalid);
                 this.$store.dispatch('setNetwork', net);
 
             },
