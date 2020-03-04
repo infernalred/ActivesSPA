@@ -1,6 +1,6 @@
 <template>
     <div class="computer">
-        <div v-if="loading" class="loading justify-content-center mb-3">
+        <div v-show="loading" class="loading justify-content-center mb-3">
             <b-spinner variant="danger" type="grow" label="Spinning"></b-spinner>
         </div>
     <div class="container" v-if="computer">
@@ -10,10 +10,16 @@
             <b-form-group id="input-group-2" label="PC Name:" label-for="input-2">
                 <b-form-input
                         id="input-2"
-                        v-model="computer.name"
+                        v-model="$v.computer.name.$model"
                         required
                         placeholder="Enter name"
+                        :state="validateState('name')"
+                        @blur="$v.computer.name.$touch()"
+                        aria-describedby="input-1-live-feedback"
                 ></b-form-input>
+                <b-form-invalid-feedback
+                        id="input-1-live-feedback"
+                >This is a required field.</b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group id="input-group-1" label="Comment:" label-for="input-1">
@@ -42,7 +48,6 @@
             </b-form-group>
 
             <b-button type="submit" variant="primary">Submit</b-button>
-            <b-button type="reset" variant="danger">Reset</b-button>
         </b-form>
             <div class="col-xs-6 col-6 col-md-3 mr-5">
                 <b-button-group>
@@ -61,8 +66,11 @@
 <script>
     import {mapActions} from "vuex";
     import Network from '../network/Network.vue';
+    import { validationMixin } from "vuelidate";
+    import { required} from "vuelidate/lib/validators";
 
     export default {
+        mixins: [validationMixin],
         components: {
             appNetwork: Network
         },
@@ -98,6 +106,14 @@
                 console.log('Del Subnet');
                 this.$store.dispatch('delNetwork')
             },
+            validateState(name) {
+                const { $dirty, $error } = this.$v.computer[name];
+                return $dirty ? !$error : null;
+            },
+            validateUser(id) {
+                const { $dirty, $error } = this.$v.userSelect[id];
+                return $dirty ? !$error : null;
+            },
             fetchData() {
                 this.loading = true;
                 this.$store.dispatch('getComputer', this.$route.params.id).then(() => {
@@ -113,6 +129,18 @@
                 evt.preventDefault();
                 console.log(this.computer)
                 this.$store.dispatch('updateComputer', this.computer);
+            }
+        },
+        validations: {
+            computer: {
+                name: {
+                    required
+                }
+            },
+            userSelect: {
+                id: {
+                    required
+                }
             }
         },
         mounted() {

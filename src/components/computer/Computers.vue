@@ -1,20 +1,36 @@
 <template>
     <div>
 
-        <div class="overflow-auto">
 
-            <b-pagination
-                    v-model="page"
-                    :total-rows="totalItems"
-                    :per-page="30"
-                    aria-controls="tableComps"
-                    align="fill"
-                    @input="loadComputersPerPage(page)"
-            ></b-pagination>
+        <div style="display: inline-block;">
+            <div style="display: inline-block;">
+                <b-pagination
+                              v-model="params.page"
+                              :total-rows="totalItems"
+                              :per-page="30"
+                              aria-controls="tableComps"
+                              align="left-center"
+                              @input="loadComputersPerPage(params)"
+                ></b-pagination>
+            </div>
+            <div style="display: inline-block; padding: 0 20px;">
+                <b-form-input
+                v-model="params.search" v-on:keyup.enter="loadComputersPerPage(params)">
+                </b-form-input>
+
+            </div>
+
+            <div style="display: inline-block;">
+                <b-button variant="success" @click="loadComputersPerPage(params)">Search</b-button>
+            </div>
+
+
+
+        </div>
 
 
         <b-table striped hover :items="computers" :bordered="tableSet.bordered" id="tableComps"
-                     :head-variant="tableSet.headVariant" :fields="fields" :current-page="page" :busy.sync="loading">
+                     :head-variant="tableSet.headVariant" :fields="fields" :current-page="params.page" :busy.sync="loading">
                 <template v-slot:table-colgroup="scope">
                     <col
                             v-for="field in scope.fields"
@@ -37,7 +53,6 @@
                 </template>
             </b-table>
 
-        </div>
     </div>
 </template>
 
@@ -49,7 +64,11 @@
         data() {
             return {
                 loading: false,
-                page: 1,
+                params: {
+                    page: 1,
+                    search: ''
+                },
+
                 totalPage: 2,
                 totalItems: 0,
                 fields: [
@@ -100,12 +119,12 @@
             ...mapActions({
                 loadComputers: 'allComputers'
             }),
-            loadComputersPerPage(page) {
+            loadComputersPerPage(params) {
                 this.loading = true;
-                this.$store.dispatch('allComputersPage', page).then((response) => {
+                this.$store.dispatch('allComputersPage', params).then((response) => {
                     let pageNew = JSON.parse(response.headers.pagination);
                     //this.page = pageNew.currentPage + 1;
-                    console.log(this.page);
+                    console.log(this.params.page);
                     this.totalItems = pageNew.totalItems;
                     this.loading = false;
                 }, error => {
@@ -121,7 +140,7 @@
         },
         mounted () {
             //this.loadComputers();
-            this.loadComputersPerPage(this.page);
+            this.loadComputersPerPage(this.params);
         }
     }
 </script>

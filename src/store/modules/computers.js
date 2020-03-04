@@ -22,9 +22,9 @@ const actions = {
             })
             .catch(error => console.log(error))
     },
-    allComputersPage ({commit}, page) {
+    allComputersPage ({commit}, params) {
         return new Promise((resolve, reject) => {
-        axios.get('/Actives/GetComputers?pageNumber=' + page)
+        axios.get('/Actives/GetComputers?search=' + params.search + '&pageNumber=' + params.page)
             .then(res => {
                     const computers2 = res.data
                     commit('LOAD_COMPUTERS', computers2);
