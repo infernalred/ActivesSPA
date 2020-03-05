@@ -32,9 +32,15 @@
                 ></b-form-textarea>
             </b-form-group>
 
-            <select v-model="computer.user" class="form-control" @change="changeUserId">
-                <option v-for="user in getUsers" :key="user.id" :value="user" >{{user.name }} {{user.id }}</option>
+            <select v-model="$v.computer.user.$model" class="form-control" required @change="changeUserId"
+                    :state="validateUser('id')"
+                    @blur="$v.computer.user.$touch()"
+                    aria-describedby="input-2-live-feedback">
+                <option v-for="user in getUsers" :key="user.id" :value="user" >{{user.name }}</option>
             </select>
+            <b-form-invalid-feedback
+                    id="input-2-live-feedback"
+            >Please, choose a user.</b-form-invalid-feedback>
             <br>
             <b-input-group prepend="Room: ">
                 <b-form-input :disabled="true" :value="computer.user.room.name"></b-form-input>
@@ -47,7 +53,7 @@
                     <b-form-checkbox v-model="computer.broken" switch>Broken</b-form-checkbox>
             </b-form-group>
 
-            <b-button type="submit" variant="primary">Submit</b-button>
+            <b-button type="submit" variant="primary" :disabled="($v.$invalid || !this.valid)">Submit</b-button>
         </b-form>
             <div class="col-xs-6 col-6 col-md-3 mr-5">
                 <b-button-group>
@@ -55,7 +61,7 @@
                     <b-button variant="warning" @click="delNetwork">Del</b-button>
                 </b-button-group>
                 <div class="mt-">
-                    <app-network v-for="network in networks" :key="network.id" :network="network"></app-network>
+                    <app-network v-for="network in networks" :key="network.id" :network="network" @checkModel="valid = $event"></app-network>
                 </div>
             </div>
         </div>
@@ -86,7 +92,8 @@
             return {
                 computer: null,
                 error: null,
-                loading: false
+                loading: false,
+                valid: true
             }
         },
         methods: {
@@ -99,11 +106,9 @@
                 this.computer.userId = this.computer.user.id
             },
             addNetwork() {
-                console.log('Add Subnet');
                 this.$store.dispatch('initNetwork')
             },
             delNetwork() {
-                console.log('Del Subnet');
                 this.$store.dispatch('delNetwork')
             },
             validateState(name) {
@@ -111,7 +116,7 @@
                 return $dirty ? !$error : null;
             },
             validateUser(id) {
-                const { $dirty, $error } = this.$v.userSelect[id];
+                const { $dirty, $error } = this.$v.computer.user[id];
                 return $dirty ? !$error : null;
             },
             fetchData() {
@@ -127,7 +132,6 @@
             },
             onSubmit(evt) {
                 evt.preventDefault();
-                console.log(this.computer)
                 this.$store.dispatch('updateComputer', this.computer);
             }
         },
@@ -135,11 +139,11 @@
             computer: {
                 name: {
                     required
-                }
-            },
-            userSelect: {
-                id: {
-                    required
+                },
+                user: {
+                    id: {
+                        required
+                    }
                 }
             }
         },

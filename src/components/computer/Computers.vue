@@ -123,8 +123,6 @@
                 this.loading = true;
                 this.$store.dispatch('allComputersPage', params).then((response) => {
                     let pageNew = JSON.parse(response.headers.pagination);
-                    //this.page = pageNew.currentPage + 1;
-                    console.log(this.params.page);
                     this.totalItems = pageNew.totalItems;
                     this.loading = false;
                 }, error => {

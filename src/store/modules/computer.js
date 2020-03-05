@@ -52,7 +52,6 @@ const actions = {
             console.log(computer)
             axios.put('/actives/UpdateComputer/' + id, computer)
                 .then(res => {
-                    console.log('update ', computer.id)
                     commit('SAVE_COMPUTER', computer);
                     resolve(res);
                 }, error => {

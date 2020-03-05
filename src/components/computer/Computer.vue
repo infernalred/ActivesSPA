@@ -111,9 +111,6 @@
             networks() {
                 return this.$store.getters.networks;
             },
-            isValid() {
-                return this.valid;
-            }
         },
         methods: {
             ...mapActions({
@@ -140,8 +137,6 @@
             onSubmit(evt) {
                 evt.preventDefault();
                 this.computer.network = this.$store.getters.networks;
-                //console.log(this.networks)
-                //console.log(this.computer)
                 this.$store.dispatch("addComputer", this.computer).then(response => {
                     if (response.status === 204)
                     {
@@ -171,12 +166,10 @@
             }
         },
         beforeMount() {
-            console.log('clean')
             this.$store.dispatch('cleanNetwork');
         },
         mounted() {
             this.loadUsers();
-            //this.$store.dispatch('cleanNetwork')
             this.$store.dispatch('initNetwork')
         }
     }

@@ -38,7 +38,6 @@
                     ipAddress: this.network.ipAddress,
                     mac: this.network.mac
                 };
-                console.log($v.network.$invalid);
                 this.$emit('checkModel', !$v.$invalid);
                 this.$store.dispatch('setNetwork', net);
 

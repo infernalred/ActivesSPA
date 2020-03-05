@@ -27,7 +27,6 @@ const actions = {
             axios.get('/Actives/GetMonitors?search=' + params.search + '&pageNumber=' + params.page)
                 .then(res => {
                     const monitors2 = res.data;
-                    console.log(monitors2);
                     commit('LOAD_MONITORS', monitors2);
                     resolve(res);
                 }, error => {

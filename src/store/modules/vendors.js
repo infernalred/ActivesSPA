@@ -11,7 +11,7 @@ const mutations = {
 };
 
 const actions = {
-    allvendors: ({commit}) => {
+    allVendors: ({commit}) => {
         axios.get('/actives/GetVendors')
             .then(res => {
                 const vendors = res.data;

@@ -49,7 +49,7 @@
                     {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
                 </b-button>
                 <br>
-                <router-link tag="button" :to="{ name: 'MonitorEdit', params: { id: row.item.id } }" class="btn btn-danger">Edit</router-link>
+                <router-link tag="button" :to="{ name: 'monitorEdit', params: { id: row.item.id } }" class="btn btn-danger">Edit</router-link>
             </template>
         </b-table>
 
@@ -105,7 +105,8 @@
                     },
                     {
                         key: 'vendor.name',
-                        sortable: true
+                        sortable: true,
+                        label: 'Vendor'
                     },
                     {
                         key: 'action',
@@ -127,8 +128,6 @@
                 this.loading = true;
                 this.$store.dispatch('allMonitorsPage', params).then((response) => {
                     let pageNew = JSON.parse(response.headers.pagination);
-                    console.log(this.Monitors);
-                    console.log(this.params.page);
                     this.totalItems = pageNew.totalItems;
                     this.loading = false;
                 }, error => {
@@ -143,7 +142,6 @@
             }
         },
         mounted () {
-            //this.loadMonitors();
             this.loadMonitorsPerPage(this.params);
         }
     }

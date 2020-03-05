@@ -35,7 +35,6 @@ const actions = {
     initNetwork ({commit}) {
         let network = { id: 1, ipAddress: '', mac: ''};
         network.id = Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
-        console.log(network);
         commit('SET_NETWORK', network);
     },
     delNetwork ({commit}, network) {
