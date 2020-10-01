@@ -1,5 +1,7 @@
 # activesapp-spa
 
+Фронт на Vue для шаблона проекта. Хранение, учет мат.ценностей
+
 ## Project setup
 ```
 npm install
